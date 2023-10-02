@@ -40,5 +40,8 @@
       "npm run lint",
       "npm run test"
     ]
+  },
+  "dependencies": {
+    "@google-cloud/text-to-speech": "^5.0.1"
   }
 }
