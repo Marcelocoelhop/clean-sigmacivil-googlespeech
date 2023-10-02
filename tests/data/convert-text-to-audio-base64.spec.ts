@@ -5,21 +5,22 @@ import { faker } from '@faker-js/faker'
 class ConvertTextToAudioBase64 implements UseCase {
   constructor(private readonly textToSpeech: TextToSpeechMock) {}
 
-  async perform(text: string): Promise<UseCase.Result> {
-    await this.textToSpeech.perform(text)
-    return { audioUrl: '' }
+  async perform(text: string): Promise<string> {
+    return await this.textToSpeech.perform(text)
   }
 }
 
 interface TextToSpeech {
-  perform: (text: string) => Promise<void>
+  perform: (text: string) => Promise<string>
 }
 
 class TextToSpeechMock implements TextToSpeech {
   input?: string
+  output = faker.string.uuid()
 
-  async perform(text: string): Promise<void> {
+  async perform(text: string): Promise<string> {
     this.input = text
+    return this.output
   }
 }
 
@@ -32,5 +33,16 @@ describe('ConvertTextToAudioBase64', () => {
     await sut.perform(text)
 
     expect(textToSpeechMock.input).toBe(text)
+  })
+
+  it('should return a correct audio url on success', async () => {
+    const textToSpeechMock = new TextToSpeechMock()
+    const fakeAudioUrl = faker.string.uuid()
+    textToSpeechMock.output = fakeAudioUrl
+    const sut = new ConvertTextToAudioBase64(textToSpeechMock)
+
+    const audioUrl = await sut.perform(faker.lorem.words())
+
+    expect(audioUrl).toBe(textToSpeechMock.output)
   })
 })
