@@ -8,7 +8,7 @@ jest.mock('@google-cloud/text-to-speech')
 class GoogleTextToSpeechAdapter implements TextToSpeech {
   async perform(text: string): Promise<string> {
     const client = new TextToSpeechClient()
-    await client.synthesizeSpeech({
+    const [response] = await client.synthesizeSpeech({
       input: { text },
       voice: {
         languageCode: 'pt-BR',
@@ -21,15 +21,19 @@ class GoogleTextToSpeechAdapter implements TextToSpeech {
         speakingRate: 1,
       },
     })
+    return `data:audio/mp3;base64,${response.audioContent?.toString()}`
   }
 }
 
 describe('GoogleTextToSpeechAdapter', () => {
   it('should call synthesizeSpeech with correct data', async () => {
-    const mockSynthesizeSpeech = jest.fn()
-    TextToSpeechClient.prototype.synthesizeSpeech = mockSynthesizeSpeech
     const sut = new GoogleTextToSpeechAdapter()
     const text = faker.lorem.words()
+    const mockResponse = {
+      audioContent: faker.string.uuid(),
+    }
+    const mockSynthesizeSpeech = jest.fn().mockReturnValueOnce([mockResponse])
+    TextToSpeechClient.prototype.synthesizeSpeech = mockSynthesizeSpeech
 
     await sut.perform(text)
 
@@ -46,5 +50,20 @@ describe('GoogleTextToSpeechAdapter', () => {
         speakingRate: 1,
       },
     })
+  })
+
+  it('should return a correct audio url on success', async () => {
+    const sut = new GoogleTextToSpeechAdapter()
+    const mockResponse = {
+      audioContent: faker.string.uuid(),
+    }
+    const mockSynthesizeSpeech = jest.fn().mockReturnValueOnce([mockResponse])
+    TextToSpeechClient.prototype.synthesizeSpeech = mockSynthesizeSpeech
+
+    const audioUrl = await sut.perform(faker.lorem.words())
+
+    expect(audioUrl).toEqual(
+      `data:audio/mp3;base64,${mockResponse.audioContent.toString()}`
+    )
   })
 })
