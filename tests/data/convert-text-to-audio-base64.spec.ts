@@ -45,4 +45,16 @@ describe('ConvertTextToAudioBase64', () => {
 
     expect(audioUrl).toBe(textToSpeechMock.output)
   })
+
+  it('should throw if TextToSpeech throws', async () => {
+    const textToSpeechMock = new TextToSpeechMock()
+    jest.spyOn(textToSpeechMock, 'perform').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const sut = new ConvertTextToAudioBase64(textToSpeechMock)
+
+    const promise = sut.perform(faker.lorem.words())
+
+    await expect(promise).rejects.toThrowError()
+  })
 })
