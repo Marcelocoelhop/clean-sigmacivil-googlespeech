@@ -105,7 +105,8 @@
   "include": [
     "src/**/*",
     "babel.config.js",
-    ".eslintrc.js"
+    ".eslintrc.js",
+    "tests/**/*"
   ],
   "exclude": []
 }

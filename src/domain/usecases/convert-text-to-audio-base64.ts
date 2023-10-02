@@ -1,8 +1,8 @@
-export interface ConvertTextToAudioBase64 {
-  perform: (text: string) => Promise<ConvertTextToAudioBase64.Result>
+export interface UseCase {
+  perform: (text: string) => Promise<UseCase.Result>
 }
 
-export namespace ConvertTextToAudioBase64 {
+export namespace UseCase {
   export interface Result {
     audioUrl: string
   }
