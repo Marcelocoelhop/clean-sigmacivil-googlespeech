@@ -1,29 +1,9 @@
-import { type TextToSpeech } from '@/data/contracts'
+import { GoogleTextToSpeechAdapter } from '@/infra'
 
 import { faker } from '@faker-js/faker'
 import { TextToSpeechClient } from '@google-cloud/text-to-speech'
 
 jest.mock('@google-cloud/text-to-speech')
-
-class GoogleTextToSpeechAdapter implements TextToSpeech {
-  async perform(text: string): Promise<string> {
-    const client = new TextToSpeechClient()
-    const [response] = await client.synthesizeSpeech({
-      input: { text },
-      voice: {
-        languageCode: 'pt-BR',
-        name: 'pt-BR-Wavenet-B',
-      },
-      audioConfig: {
-        audioEncoding: 'MP3',
-        effectsProfileId: ['large-home-entertainment-class-device'],
-        pitch: -2,
-        speakingRate: 1,
-      },
-    })
-    return `data:audio/mp3;base64,${response.audioContent?.toString()}`
-  }
-}
 
 describe('GoogleTextToSpeechAdapter', () => {
   it('should call synthesizeSpeech with correct data', async () => {
