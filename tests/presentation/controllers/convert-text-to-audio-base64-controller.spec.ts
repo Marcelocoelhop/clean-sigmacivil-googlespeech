@@ -20,7 +20,13 @@ class ConvertTextToAudioBase64Controller implements Controller {
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     const { text } = httpRequest.body
-    await this.convertTextToAudioBase64.perform(text)
+    const audioUrl = await this.convertTextToAudioBase64.perform(text)
+    return {
+      status: 200,
+      body: {
+        audioUrl,
+      },
+    }
   }
 }
 
@@ -49,5 +55,26 @@ describe('ConvertTextToAudioBase64Controller', () => {
     })
 
     expect(convertTextToAudioBase64Mock.input).toBe(text)
+  })
+
+  it('should return 200 if ConvertTextToAudioBase64 returns a correct audio url', async () => {
+    const convertTextToAudioBase64Mock = new ConvertTextToAudioBase64Mock()
+    const audioUrl = faker.lorem.words()
+    convertTextToAudioBase64Mock.output = audioUrl
+    const mockResponse = {
+      audioUrl,
+    }
+    const sut = new ConvertTextToAudioBase64Controller(
+      convertTextToAudioBase64Mock
+    )
+
+    const httpResponse = await sut.handle({
+      body: {
+        text: faker.lorem.words(),
+      },
+    })
+
+    expect(httpResponse.status).toBe(200)
+    expect(httpResponse.body).toEqual(mockResponse)
   })
 })
