@@ -5,7 +5,7 @@ import { TextToSpeechClient } from '@google-cloud/text-to-speech'
 export class GoogleTextToSpeechAdapter implements TextToSpeech {
   async perform(text: string): Promise<string> {
     const client = new TextToSpeechClient()
-    const [response] = await client.synthesizeSpeech({
+    const [response] = (await client.synthesizeSpeech({
       input: { text },
       voice: {
         languageCode: 'pt-BR',
@@ -17,7 +17,7 @@ export class GoogleTextToSpeechAdapter implements TextToSpeech {
         pitch: -2,
         speakingRate: 1,
       },
-    })
-    return `data:audio/mp3;base64,${response.audioContent?.toString()}`
+    })) as any
+    return `data:audio/mp3;base64,${response.audioContent?.toString('base64')}`
   }
 }

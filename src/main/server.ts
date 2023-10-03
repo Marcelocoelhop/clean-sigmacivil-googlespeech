@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { setupApp } from './config'
 
 const app = setupApp()
