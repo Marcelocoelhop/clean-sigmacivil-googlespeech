@@ -19,13 +19,24 @@ class ConvertTextToAudioBase64Controller implements Controller {
   constructor(private readonly convertTextToAudioBase64: UseCase) {}
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
-    const { text } = httpRequest.body
-    const audioUrl = await this.convertTextToAudioBase64.perform(text)
-    return {
-      status: 200,
-      body: {
-        audioUrl,
-      },
+    try {
+      const { text } = httpRequest.body
+      const audioUrl = await this.convertTextToAudioBase64.perform(text)
+      return {
+        status: 200,
+        body: {
+          audioUrl,
+        },
+      }
+    } catch (error) {
+      return {
+        status: 500,
+        body: {
+          error: {
+            message: error.message,
+          },
+        },
+      }
     }
   }
 }
@@ -76,5 +87,31 @@ describe('ConvertTextToAudioBase64Controller', () => {
 
     expect(httpResponse.status).toBe(200)
     expect(httpResponse.body).toEqual(mockResponse)
+  })
+
+  it('should return 500 if ConvertTextToAudioBase64 throws', async () => {
+    const convertTextToAudioBase64Mock = new ConvertTextToAudioBase64Mock()
+    const error = new Error()
+    jest
+      .spyOn(convertTextToAudioBase64Mock, 'perform')
+      .mockImplementationOnce(() => {
+        throw error
+      })
+    const sut = new ConvertTextToAudioBase64Controller(
+      convertTextToAudioBase64Mock
+    )
+
+    const httpResponse = await sut.handle({
+      body: {
+        text: faker.lorem.words(),
+      },
+    })
+
+    expect(httpResponse.status).toBe(500)
+    expect(httpResponse.body).toEqual({
+      error: {
+        message: error.message,
+      },
+    })
   })
 })
