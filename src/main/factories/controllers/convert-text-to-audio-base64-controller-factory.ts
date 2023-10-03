@@ -1,6 +1,6 @@
 import { ConvertTextToAudioBase64 } from '@/data/usecases'
 
-import { GoogleTextToSpeechAdapter } from '@/infra'
+import { GoogleTextToSpeechAdapter } from '@/infra/libs'
 
 import { type Controller } from '@/presentation/contracts'
 import { ConvertTextToAudioBase64Controller } from '@/presentation/controllers'

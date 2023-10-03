@@ -1,4 +1,4 @@
-import { GoogleTextToSpeechAdapter } from '@/infra'
+import { GoogleTextToSpeechAdapter } from '@/infra/libs'
 
 import { faker } from '@faker-js/faker'
 import { TextToSpeechClient } from '@google-cloud/text-to-speech'
