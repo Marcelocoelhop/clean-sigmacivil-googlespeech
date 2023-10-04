@@ -5,8 +5,11 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev -r tsconfig-paths/register ./src/main/server.ts",
+    "start": "node ./build/main/server.js",
+    "build": "rimraf ./build && tsc -p tsconfig.build.json",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --passWithNoTests --watch",
+    "test:ci": "jest --coverage",
     "lint": "eslint --ignore-path .eslintignore --no-error-on-unmatched-pattern --ext .js,.ts .",
     "prepare": "husky install",
     "lint-staged": "npx lint-staged"
@@ -22,6 +25,7 @@
     "@types/cors": "^2.8.14",
     "@types/express": "^4.17.18",
     "@types/jest": "^29.5.5",
+    "@types/module-alias": "^2.0.2",
     "@types/supertest": "^2.0.14",
     "@types/swagger-ui-express": "^4.1.4",
     "@typescript-eslint/eslint-plugin": "^6.7.3",
@@ -37,6 +41,7 @@
     "husky": "^8.0.3",
     "jest": "^29.7.0",
     "lint-staged": "^14.0.1",
+    "rimraf": "^5.0.5",
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
@@ -44,18 +49,22 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.2.2"
   },
+  "dependencies": {
+    "@google-cloud/text-to-speech": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "module-alias": "^2.2.3",
+    "swagger-ui-express": "^5.0.0",
+    "zod": "^3.22.3"
+  },
   "lint-staged": {
     "*.{ts,js}": [
       "npm run lint",
       "npm run test"
     ]
   },
-  "dependencies": {
-    "@google-cloud/text-to-speech": "^5.0.1",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "swagger-ui-express": "^5.0.0",
-    "zod": "^3.22.3"
+  "_moduleAliases": {
+    "@": "build"
   }
 }
