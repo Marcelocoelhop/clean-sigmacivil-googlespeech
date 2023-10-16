@@ -25,6 +25,3 @@ jobs:
 
       - name: Check tests
         run: npm run test:ci
-
-      - name: Commitlint CLI
-        uses: bennypowers/commitlint-gh-actions@v1.0.1
